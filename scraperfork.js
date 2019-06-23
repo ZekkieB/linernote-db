@@ -91,6 +91,8 @@ const instagramScraper = async (instagramUrl,id) => {
 
 		const resolvedPromises = await Promise.all(saneInstagramData);
 
+		console.log(resolvedPromises);
+
 		resolvedPromises.forEach(resolve => {
 				instagramPosts.create({
 					artistId: id,
