@@ -214,6 +214,7 @@ const dataWorker = async (socialmediaScraperFunction) => {
 	const artistData = await artists.findAll();
 
 	artistData.forEach((artist, index) => {
-		console.log(artist,index);
+		const id = index+1;
+		console.log(id);
 	});
 };
