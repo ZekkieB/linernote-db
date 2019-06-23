@@ -20,7 +20,7 @@ const rl = require("readline").createInterface({
 rl.prompt(true);
 
 rl.on("line", (cliCommand) => {
-	console.log(cliCommand);
+	commandLineOptions(cliCommand)
 	rl.prompt(true)
 });
 
