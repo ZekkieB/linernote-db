@@ -213,7 +213,7 @@ const instagramScraper = async (instagramUrl,id) => {
 const dataWorker = async (socialmediaScraperFunction) => {
 	const artistData = await artists.findAll();
 
-	artists.forEach((artist, index) => {
+	artistData.forEach((artist, index) => {
 		console.log(artist,index);
 	});
 };
