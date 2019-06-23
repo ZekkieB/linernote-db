@@ -25,6 +25,20 @@ rl.on("line", (cliCommand) => {
 });
 
 
+
+
+const commandLineOptions = (command) => {
+	switch(command){
+		case "scrape youtube":
+			console.log("scraping youtube");
+			break;
+		case "scrape instagram":
+			console.log("scraping youtube");
+			break;
+	}
+}
+
+
 const edgeSanitationWorker = async (entry) => {
 	const {node} = entry;
 	const {edge_liked_by,shortcode,taken_at_timestamp} = node;

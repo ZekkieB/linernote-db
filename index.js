@@ -8,7 +8,7 @@ app.use(cookieParser());
 const {fork} = require("child_process");
 
 
-// const scraper = fork("./scraperfork.js");
+const scraper = fork("./scraperfork.js");
 
 require("./connection.js");
 const artist = require("./models/artist.js");
