@@ -88,7 +88,7 @@ const instagramScraper = async (instagramUrl,id) => {
 		if(instagramResponseData.statusCode < 400) {
 			const instagramPost = JSON.parse(instagramResponseData.body).graphql.user.edge_owner_to_timeline_media.edges;
 
-		
+			console.log(instagramPost.length)
 
 			const saneInstagramData = await instagramPost.map(edgeSanitationWorker);
 
