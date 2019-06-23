@@ -85,7 +85,7 @@ const instagramScraper = async (instagramUrl,id) => {
 	try{
 		const instagramResponseData = await request(instagramUrl+"?__a=1");
 
-		if(instagramResponseData.responseCode < 400) {
+		if(instagramResponseData.statusCode < 400) {
 			const instagramPost = JSON.parse(instagramResponseData.body).graphql.user.edge_owner_to_timeline_media.edges;
 
 		
