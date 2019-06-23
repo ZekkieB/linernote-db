@@ -85,7 +85,9 @@ const instagramScraper = async (instagramUrl,id) => {
 	try{
 		const instagramResponseData = await request(instagramUrl+"?__a=1");
 
-		const instagramPost = JSON.parse(instagramResponseData.body).graphql.user.edge_owner_to_timeline_media.edges;
+		//const instagramPost = JSON.parse(instagramResponseData.body).graphql.user.edge_owner_to_timeline_media.edges;
+
+		console.log(instagramResponseData.response);
 
 		const saneInstagramData = await instagramPost.map(edgeSanitationWorker);
 
