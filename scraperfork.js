@@ -91,7 +91,6 @@ const instagramScraper = async (instagramUrl,id) => {
 
 		const resolvedPromises = await Promise.all(saneInstagramData);
 
-		console.log(resolvedPromises);
 
 		resolvedPromises.forEach(resolve => {
 				// instagramPosts.create({
@@ -102,7 +101,7 @@ const instagramScraper = async (instagramUrl,id) => {
 				// 	likes: resolve.likes
 				// })
 
-				console.log(resolve.html)
+				console.log(typeof resolve.html)
 			})
 	}catch(error) {
 		console.error(error)
