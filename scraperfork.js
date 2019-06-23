@@ -96,15 +96,15 @@ const instagramScraper = async (instagramUrl,id) => {
 
 
 			resolvedPromises.forEach(resolve => {
-					// instagramPosts.create({
-					// 	artistId: id,
-					// 	shortCode: resolve.shortcode,
-					// 	html: resolve.html,
-					// 	timestamp: resolve.timestamp,
-					// 	likes: resolve.likes
-					// })
+					instagramPosts.create({
+						artistId: id,
+						shortCode: resolve.shortcode,
+						html: resolve.html,
+						timestamp: resolve.timestamp,
+						likes: resolve.likes
+					})
 
-					console.log(resolve.shortcode)
+					
 				})
 		}
 
