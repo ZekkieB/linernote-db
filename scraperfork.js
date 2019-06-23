@@ -85,26 +85,30 @@ const instagramScraper = async (instagramUrl,id) => {
 	try{
 		const instagramResponseData = await request(instagramUrl+"?__a=1");
 
-		const instagramPost = JSON.parse(instagramResponseData.body).graphql.user.edge_owner_to_timeline_media.edges;
+		if(instagramResponseData.responseCode < 400) {
+			const instagramPost = JSON.parse(instagramResponseData.body).graphql.user.edge_owner_to_timeline_media.edges;
 
-		console.log(instagramResponseData.response);
+		
 
-		const saneInstagramData = await instagramPost.map(edgeSanitationWorker);
+			const saneInstagramData = await instagramPost.map(edgeSanitationWorker);
 
-		const resolvedPromises = await Promise.all(saneInstagramData);
+			const resolvedPromises = await Promise.all(saneInstagramData);
 
 
-		resolvedPromises.forEach(resolve => {
-				// instagramPosts.create({
-				// 	artistId: id,
-				// 	shortCode: resolve.shortcode,
-				// 	html: resolve.html,
-				// 	timestamp: resolve.timestamp,
-				// 	likes: resolve.likes
-				// })
+			resolvedPromises.forEach(resolve => {
+					// instagramPosts.create({
+					// 	artistId: id,
+					// 	shortCode: resolve.shortcode,
+					// 	html: resolve.html,
+					// 	timestamp: resolve.timestamp,
+					// 	likes: resolve.likes
+					// })
 
-				console.log(typeof resolve.html)
-			})
+					console.log(resolve.shortcode)
+				})
+		}
+
+		
 	}catch(error) {
 		console.error(error)
 	}
@@ -219,9 +223,9 @@ const dataWorker = async (socialmediaScraperFunction) => {
 	const artistData = await artists.findAll();
 
 	artistData.forEach((artist, index) => {
-		// const id = index+1;
-		// instagramScraper(artist.instagram,id)
+		const id = index+1;
+		instagramScraper(artist.instagram,id)
 
-		console.log(artist.instagram);
+
 	});
 };
