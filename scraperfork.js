@@ -12,6 +12,18 @@ const instagramPosts = require("./models/instaPost.js")
 const youtubeScraper = require("./scrapers/youtubeScraper.js");
 
 
+const rl = require("readline").createInterface({
+	input: process.stdin,
+	output:process.stdout
+})
+
+rl.prompt(true);
+
+rl.on("line", (cliCommand) => {
+	console.log(cliCommand);
+	rl.prompt(true)
+});
+
 
 const edgeSanitationWorker = async (entry) => {
 	const {node} = entry;
