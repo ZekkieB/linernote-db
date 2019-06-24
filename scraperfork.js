@@ -9,8 +9,10 @@ const wikiModel = require("./models/wikiDescription.js");
 const youtubeModel = require("./models/youtubePost.js");
 const instagramPosts = require("./models/instaPost.js")
 
-const youtubeScraper = require("./scrapers/youtubeScraper.js");
 
+const youtubeScraper = require("./scrapers/youtubeScraper.js");
+const instagramScraper = require("./scrapers/instagramScraper.js");
+const wikiScraper = require("./scrapers/wikiScraper.js");
 
 const rl = require("readline").createInterface({
 	input: process.stdin,
@@ -27,10 +29,15 @@ rl.on("line", (cliCommand) => {
 
 
 
+
+
 const commandLineOptions = (command) => {
 	switch(command){
 		case "scrape youtube":
-			console.log("scraping youtube");
+			dataWorker((artist) => {
+				const {youtube} = artist;
+				youtubeScraper(artist);
+			})
 			break;
 		case "scrape instagram":
 			dataWorker((artist) => {
@@ -38,38 +45,23 @@ const commandLineOptions = (command) => {
 				instagramScraper(instagram,id);
 			});
 			break;
+		case "scrape wiki":
+			dataWorker((artist) => {
+				wikiScraper(artist);
+			});
+			break;
 	}
 }
 
 
-const edgeSanitationWorker = async (entry) => {
-	const {node} = entry;
-	const {edge_liked_by,shortcode,taken_at_timestamp} = node;
-	const data = await request(`https://api.instagram.com/oembed/?url=http://instagr.am/p/${shortcode}&omitscript=true`);
-	return {
-		likes:edge_liked_by.count,
-		timestamp:taken_at_timestamp,
-		shortcode: shortcode,
-		html:JSON.parse(data.body).html
-	}
-}
 
 
-const wikiScraper = async (wikiUrl) => {
 
-	const wikiSlug = wikiUrl.replace("https://en.wikipedia.org/wiki/","");
-
-
-	const wikiData = await request(`https://en.wikipedia.org/api/rest_v1/page/summary/${wikiSlug}`);
-
-	return JSON.parse(wikiData.body).extract;
-}
 
 const ticketMasterScraper = async (name) => {
 	setTimeout(async () => {
 		const ticketMasterData = await request(`http://app.ticketmaster.com/discovery/v2/events.json?keyword=${name}&apikey=uUFkAesEVbPUn0m1UQZRn8Ji6LKVkc3A`)
 		const data = JSON.parse(ticketMasterData.body);
-	  
 	  console.log(data._embedded)
 	},5000)
 };
@@ -78,42 +70,10 @@ const ticketMasterScraper = async (name) => {
 
 
 
-const getYoutubeIdentifier = (youtubeUrl) => {
-	return youtubeUrl.split("/")[4];
-}
 
 
-const instagramScraper = async (instagramUrl,id) => {
-
-	try{
-		const instagramResponseData = await request(instagramUrl+"?__a=1");
-
-		if(instagramResponseData.statusCode < 400) {
-			const instagramPost = JSON.parse(instagramResponseData.body).graphql.user.edge_owner_to_timeline_media.edges;
 
 
-			const saneInstagramData = await instagramPost.map(edgeSanitationWorker);
-			const resolvedPromises = await Promise.all(saneInstagramData);
-			resolvedPromises.forEach(resolve => {
-					instagramPosts.create({
-						artistId: id,
-						shortCode: resolve.shortcode,
-						html: resolve.html,
-						timestamp: resolve.timestamp,
-						likes: resolve.likes
-					})
-
-					
-				})
-		}
-
-		
-	}catch(error) {
-		console.error(error)
-	}
-	
-		
-}
 
 
 
@@ -127,9 +87,7 @@ const instagramScraper = async (instagramUrl,id) => {
 const dataWorker = async (socialmediaScraperFunction) => {
 	const artistData = await artists.findAll();
 
-	artistData.forEach((artist, index) => {
-
+	artistData.forEach((artist) => {
 		socialmediaScraperFunction(artist);
-
 	});
 };
