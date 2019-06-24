@@ -33,7 +33,10 @@ const commandLineOptions = (command) => {
 			console.log("scraping youtube");
 			break;
 		case "scrape instagram":
-			dataWorker();
+			dataWorker((artist) => {
+				const {instagram,id} = artist;
+				instagramScraper(instagram,id);
+			});
 			break;
 	}
 }
@@ -88,14 +91,9 @@ const instagramScraper = async (instagramUrl,id) => {
 		if(instagramResponseData.statusCode < 400) {
 			const instagramPost = JSON.parse(instagramResponseData.body).graphql.user.edge_owner_to_timeline_media.edges;
 
-			console.log(instagramPost.length)
 
 			const saneInstagramData = await instagramPost.map(edgeSanitationWorker);
-
 			const resolvedPromises = await Promise.all(saneInstagramData);
-
-			console.log(resolvedPromises.length);
-
 			resolvedPromises.forEach(resolve => {
 					instagramPosts.create({
 						artistId: id,
@@ -118,45 +116,20 @@ const instagramScraper = async (instagramUrl,id) => {
 }
 
 
-(async () => {
 
-	const data = await artists.findAll({
-		raw:true
+
+
+
+
+
+
+
+const dataWorker = async (socialmediaScraperFunction) => {
+	const artistData = await artists.findAll();
+
+	artistData.forEach((artist, index) => {
+
+		socialmediaScraperFunction(artist);
+
 	});
-
-	
-
-
-	
-
-
-	for(let i = 0; i < data.length; i++) {
-
-
-		instagramScraper(data[i].instagram,data[i].id);
-
-
-	}
-	
-
-
-	
-
-})();
-
-
-
-
-
-// })();
-
-// const dataWorker = async (socialmediaScraperFunction) => {
-// 	const artistData = await artists.findAll();
-
-// 	artistData.forEach((artist, index) => {
-// 		const id = index+1;
-// 		instagramScraper(artist.instagram,id)
-
-
-// 	});
-// };
+};
