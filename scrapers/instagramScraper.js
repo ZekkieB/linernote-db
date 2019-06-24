@@ -1,4 +1,5 @@
 const request = require("async-request");
+const instagramPosts = require("../models/instaPost.js");
 const edgeSanitationWorker = async (entry) => {
 	const {node} = entry;
 	const {edge_liked_by,shortcode,taken_at_timestamp} = node;
