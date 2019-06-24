@@ -38,6 +38,6 @@ const operatorsAliases = {
   $col: Op.col
 };
 
-const sequelize = new Sequelize("linernote", "root", "b2hg8AJq", {host: "127.0.0.1", dialect: "mysql", operatorsAliases: operatorsAliases,logging:false});
+const sequelize = new Sequelize("linernote", "root", "b2hg8AJq", {host: "127.0.0.1", dialect: "mysql",dialectOptions:{charset:"utf8mb4"}, operatorsAliases: operatorsAliases,logging:false});
 module.exports = sequelize;
 global.sequelize = sequelize;
