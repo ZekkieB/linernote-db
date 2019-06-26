@@ -13,7 +13,8 @@ const instagramPosts = require("./models/instaPost.js")
 const youtubeScraper = require("./scrapers/youtubeScraper.js");
 const instagramScraper = require("./scrapers/instagramScraper.js");
 const wikiScraper = require("./scrapers/wikiScraper.js");
-const scrapeTwitter = require("./scrapers/twitterScraper.js")
+const scrapeTwitter = require("./scrapers/twitterScraper.js");
+const ticketMasterScraper = require("./scrapers/ticketmasterScraper.js");
 
 const rl = require("readline").createInterface({
 	input: process.stdin,
@@ -56,6 +57,13 @@ const commandLineOptions = (command) => {
 				scrapeTwitter(artist);
 			});
 			break;
+		case "scrape ticketmaster":
+			dataWorker((artist,index) => {
+				setTimeout(() => {
+					ticketMasterScraper(artist.name)
+				},2000*index)
+			});
+		break;
 	}
 }
 
@@ -64,13 +72,7 @@ const commandLineOptions = (command) => {
 
 
 
-const ticketMasterScraper = async (name) => {
-	setTimeout(async () => {
-		const ticketMasterData = await request(`http://app.ticketmaster.com/discovery/v2/events.json?keyword=${name}&apikey=uUFkAesEVbPUn0m1UQZRn8Ji6LKVkc3A`)
-		const data = JSON.parse(ticketMasterData.body);
-	  console.log(data._embedded)
-	},5000)
-};
+
 
 
 
@@ -93,7 +95,7 @@ const ticketMasterScraper = async (name) => {
 const dataWorker = async (socialmediaScraperFunction) => {
 	const artistData = await artists.findAll();
 
-	artistData.forEach((artist) => {
-		socialmediaScraperFunction(artist);
+	artistData.forEach((artist,index) => {
+		socialmediaScraperFunction(artist,index);
 	});
 };

@@ -108,8 +108,17 @@ app.get("/api/v1/user", (req,res) => {
 
 
 
-app.post("/api/v1/user/follow", (req,res) => {
 
+app.post("/api/v1/user/follow", (req,res) => {
+	let {artistId,userId} = req.query;
+	artistId = parseInt(artistId);
+	userId = parseInt(userId)
+	userFollowing.create({
+		artistId:artistId,
+		userId:userId,
+	});
+
+	res.send("{status:OK}");
 })
 
 app.delete("/api/v1/user/unfollow", (req,res) => {
