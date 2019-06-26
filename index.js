@@ -4,10 +4,13 @@ const app = express();
 const cookieParser = require("cookie-parser");
 const fs = require("fs");
 const cors = require("cors");
+const bodyParser = require("body-parser")
 
 app.use(cookieParser());
+app.use(bodyParser.urlencoded({ extended: false }))
 app.use(cors());
 const {fork} = require("child_process");
+
 
 
 const scraper = fork("./scraperfork.js");
@@ -136,7 +139,17 @@ app.post("/api/v1/user/follow", (req,res) => {
 })
 
 app.delete("/api/v1/user/unfollow", (req,res) => {
+	const userId = parseInt(req.body.userId);
+	const artistId = parseInt(req.body.artistId);
 
+	userFollowing.destroy({
+		where:{
+			userId:userId,
+			artistId:artistId
+		}
+	}).then(() => {
+		res.send("lolol")
+	});
 })
 
 
