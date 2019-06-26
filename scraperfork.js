@@ -13,6 +13,7 @@ const instagramPosts = require("./models/instaPost.js")
 const youtubeScraper = require("./scrapers/youtubeScraper.js");
 const instagramScraper = require("./scrapers/instagramScraper.js");
 const wikiScraper = require("./scrapers/wikiScraper.js");
+const scrapeTwitter = require("./scrapers/twitterScraper.js")
 
 const rl = require("readline").createInterface({
 	input: process.stdin,
@@ -48,6 +49,11 @@ const commandLineOptions = (command) => {
 		case "scrape wiki":
 			dataWorker((artist) => {
 				wikiScraper(artist);
+			});
+			break;
+		case "scrape twitter":
+			dataWorker((artist) => {
+				scrapeTwitter(artist);
 			});
 			break;
 	}
