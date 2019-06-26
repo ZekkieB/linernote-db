@@ -49,7 +49,8 @@ app.get("/", (req, response, next) => {
 app.get("/api/v1/artists", (req,res) => {
 	console.log(req.cookies.test)
 	artist.findAll({
-		attributes:["id","name"]
+		attributes:["id","name"],
+		limit:15
 	}).then(results => {
 		res.cookie("test","foobar")
 		res.send(results);
