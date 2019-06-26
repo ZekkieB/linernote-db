@@ -3,9 +3,10 @@ const express = require("express");
 const app = express();
 const cookieParser = require("cookie-parser");
 const fs = require("fs");
-
+const cors = require("cors");
 
 app.use(cookieParser());
+app.use(cors());
 const {fork} = require("child_process");
 
 
