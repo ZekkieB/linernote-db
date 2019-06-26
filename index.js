@@ -58,8 +58,9 @@ app.get("/api/v1/artists", (req,res) => {
 });
 
 app.get("/api/v1/artist", (req,res) => {
-	const id = parseInt(req.query.id);
+	const id = req.query.id ? parseInt(req.query.id) : null;
 	const name = req.query.name;
+	console.log(id)
 	artist.findOne({
 		attributes:["id","name"],
 		include:[{
@@ -74,12 +75,17 @@ app.get("/api/v1/artist", (req,res) => {
 		},{
 			model:tweets,
 			as:"tweets"
-		}],
-		where:{
-			name:{$like:`%${name}%`}
+		}],where:{
+			$or:[{
+				id:id,
+			},{
+				name:{
+				$like:`%${name}%`
+			}
+			}
+		]
 		}
 	}).then(results => {
-		console.log(results)
 		res.send(results);
 	});
 });
