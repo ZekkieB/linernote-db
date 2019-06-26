@@ -20,14 +20,17 @@ const user = require("./models/user.js");
 const wikiModel = require("./models/wikiDescription.js");
 const youtubeVideos = require("./models/youtubePost.js");
 const tweets = require("./models/twitterPost.js");
+const ticketmasterEvents = require("./models/ticketmasterEvent.js");
 
 artist.hasMany(instaPosts, {as:"instagramPosts"});
 artist.hasMany(youtubeVideos, {as:"youtube-videos"});
 artist.hasMany(tweets, {as:"tweets"});
+artist.hasMany(ticketmasterEvents, {as:"events"})
 artist.hasOne(wikiModel);
 instaPosts.belongsTo(artist);
 youtubeVideos.belongsTo(artist);
 tweets.belongsTo(artist);
+ticketmasterEvents.belongsTo(artist);
 
 user.belongsToMany(artist,{through:userFollowing, as:"following"});
 artist.belongsToMany(user,{through:userFollowing, as:"followers"});
@@ -76,6 +79,9 @@ app.get("/api/v1/artist", (req,res) => {
 		},{
 			model:tweets,
 			as:"tweets"
+		},{
+			model:ticketmasterEvents,
+			as:"events"
 		}],where:{
 			$or:[{
 				id:id,

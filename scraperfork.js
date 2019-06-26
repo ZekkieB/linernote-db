@@ -1,20 +1,16 @@
 const puppeteer = require("puppeteer");
 const request = require("async-request");
 
-require("./connection.js");
-
-const artists = require("./models/artist.js");
-//const instagramPosts = require("./models/instaPost.js");
-const wikiModel = require("./models/wikiDescription.js");
-const youtubeModel = require("./models/youtubePost.js");
-const instagramPosts = require("./models/instaPost.js")
-
+require("./connection.js")
 
 const youtubeScraper = require("./scrapers/youtubeScraper.js");
 const instagramScraper = require("./scrapers/instagramScraper.js");
 const wikiScraper = require("./scrapers/wikiScraper.js");
 const scrapeTwitter = require("./scrapers/twitterScraper.js");
 const ticketMasterScraper = require("./scrapers/ticketmasterScraper.js");
+const scrapeArtists = require("./scrapers/artistScraper.js");
+
+const artists = require("./models/artist.js");
 
 const rl = require("readline").createInterface({
 	input: process.stdin,
@@ -27,10 +23,6 @@ rl.on("line", (cliCommand) => {
 	commandLineOptions(cliCommand)
 	rl.prompt(true)
 });
-
-
-
-
 
 
 const commandLineOptions = (command) => {
@@ -60,10 +52,13 @@ const commandLineOptions = (command) => {
 		case "scrape ticketmaster":
 			dataWorker((artist,index) => {
 				setTimeout(() => {
-					ticketMasterScraper(artist.name)
+					ticketMasterScraper(artist.name, artist.id)
 				},2000*index)
 			});
 		break;
+		case "scrape artists":
+			scrapeArtists();
+			break;
 	}
 }
 
