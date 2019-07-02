@@ -100,7 +100,7 @@ app.get("/api/v1/artist", (req,res) => {
 
 		return {
 			artist: results.name,
-			id: id,
+			id: results.id,
 			instagramPosts: results.instagramPosts.map(ig => {
 				return {
 					html: ig.html,
@@ -208,17 +208,82 @@ app.get("/api/v1/user", (req,res) => {
 		include:[{
 			model: artist,
 			as: "following",
-			attributes:["id","name"]
+			attributes:["id","name"],
+			include: [{
+			model:instaPosts,
+			as: "instagramPosts",
+		},{
+			model:youtubeVideos,
+			as:"youtube-videos"
+		},{
+			model:tweets,
+			as:"tweets"
+		},{
+			model:ticketmasterEvents,
+			as:"events"
+		}]
 		}],
 		where: {
 			id:id
 		}
 	}).then(user => {
-		res.send(user)
+		res.send({
+			id:user.id,
+			email:user.email,
+			ordered:returnOrderedUserData(user.following)
+		});
 	});
 })
 
 
+
+const returnOrderedUserData = (following) => {
+	const unorderedList = [];
+
+	following.forEach( follow => {
+
+		follow.tweets.forEach(tweet => {
+			unorderedList.push({
+				mediaType: "tweet",
+				html: tweet.html,
+				timestamp: new Date(tweet.post_date).getTime(),
+				artist: follow.name
+			});
+		});
+
+		follow["youtube-videos"].forEach(yt => {
+			unorderedList.push({
+				mediaType: "youtube",
+				video_id: yt.video_id,
+				timestamp: new Date(yt.post_date).getTime(),
+				artist: follow.name
+			});
+		});
+
+		follow.instagramPosts.forEach(ig => {
+			unorderedList.push({
+				html: ig.html,
+				timestamp: ig.timestamp * 1000,
+				artist: follow.name
+			})
+		});
+
+		follow.events.forEach(tm => {
+			unorderedList.push({
+				url: tm.url,
+				name: tm.event_name,
+				country: tm.country,
+				city: tm.city,
+				image: tm.image,
+				timestamp: new Date(tm.start_date).getTime(),
+				artist: follow.name
+			})
+		})
+	});
+
+
+	return sortedData(unorderedList);
+}
 
 
 
