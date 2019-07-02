@@ -64,9 +64,12 @@ app.get("/api/v1/artists", (req,res) => {
 	});
 });
 
+
+
 app.get("/api/v1/artist", (req,res) => {
 	const id = req.query.id ? parseInt(req.query.id) : null;
 	const name = req.query.name;
+	const sorted = parseBool(req.query.sorted);
 	artist.findOne({
 		attributes:["id","name"],
 		include:[{
@@ -133,11 +136,68 @@ app.get("/api/v1/artist", (req,res) => {
 
 		
 	}).then(data => {
-		res.send(data);
+
+
+		
+
+		if(sorted) {
+			data.sorted = returnSortedData(data);
+			res.send(data)
+		}else {
+			res.send(data)
+		}
+
 	});
 });
 
 
+
+const sortedData = (array) => {
+
+	const sortCondition = (a,b) => {
+		return a.timestamp - b.timestamp
+	};
+
+	return array.sort(sortCondition);
+}
+
+
+const returnSortedData = (data) => {
+	let dataArray = [];
+
+		data.twitterPosts.forEach(i => {
+			i.mediaType = "twitter";
+			dataArray.push(i);
+		})
+
+		data.instagramPosts.forEach(i => {
+			i.mediaType = "instagram";
+			dataArray.push(i)
+		})
+
+		data.events.forEach((i => {
+			i.mediaType = "event";
+			dataArray.push(i)
+		}));
+
+		data.youtubeVideos.forEach(i => {
+			i.mediaType = "youtube";
+			dataArray.push(i)
+		})
+
+		return sortedData(dataArray);
+}
+
+const parseBool = (value) => {
+	let bool = false;
+	if(value === "true") {
+		return ApplicationCachebool = true
+	}else if(value === "false") {
+		return bool
+	}else {
+		return undefined;
+	}
+}
 
 app.get("/api/v1/user", (req,res) => {
 
