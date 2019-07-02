@@ -67,13 +67,11 @@ app.get("/api/v1/artists", (req,res) => {
 app.get("/api/v1/artist", (req,res) => {
 	const id = req.query.id ? parseInt(req.query.id) : null;
 	const name = req.query.name;
-	console.log(id)
 	artist.findOne({
 		attributes:["id","name"],
 		include:[{
 			model:instaPosts,
 			as: "instagramPosts",
-			attributes:["id","html","shortcode"],
 		},{
 			model:wikiModel
 		},{
@@ -96,7 +94,46 @@ app.get("/api/v1/artist", (req,res) => {
 		]
 		}
 	}).then(results => {
-		res.send(results);
+
+		return {
+			artist: results.name,
+			id: id,
+			instagramPosts: results.instagramPosts.map(ig => {
+				return {
+					html: ig.html,
+					timestamp: (ig.timestamp)*1000
+				}
+			}),
+			youtubeVideos: results["youtube-videos"].map(yt => {
+				return {
+					video_id: yt.video_id,
+					timestamp: new Date(yt.post_date).getTime()
+				}
+			}),
+			events: results.events.map(tm => {
+				return {
+					url: tm.url,
+					name: tm.event_name,
+					country: tm.country,
+					city: tm.city,
+					image: tm.image,
+					timestamp: new Date(tm.start_date).getTime()
+				}
+			}),
+			twitterPosts:results.tweets.map(tweets => {
+				return {
+					html: tweets.html ,
+					timestamp: new Date(tweets.post_date).getTime()
+				}
+				
+			}),
+			wikiDescription: results.wikiDescription,
+
+		}
+
+		
+	}).then(data => {
+		res.send(data);
 	});
 });
 
