@@ -68,7 +68,7 @@ app.get("/api/v1/artists", (req,res) => {
 
 app.get("/api/v1/artist", (req,res) => {
 	const id = req.query.id ? parseInt(req.query.id) : null;
-	const name = req.query.name;
+	const name = decodeURI(req.query.name);
 	const sorted = parseBool(req.query.sorted);
 	artist.findOne({
 		attributes:["id","name"],
@@ -202,7 +202,7 @@ const parseBool = (value) => {
 app.get("/api/v1/user", (req,res) => {
 
 	const id = parseInt(req.query.id);
-	console.log("=========================",req.cookies)
+
 
 	user.findOne({
 		include:[{
