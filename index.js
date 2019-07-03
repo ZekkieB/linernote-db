@@ -230,6 +230,7 @@ app.get("/api/v1/user", (req,res) => {
 		res.send({
 			id:user.id,
 			email:user.email,
+			following:user.following,
 			ordered:returnOrderedUserData(user.following)
 		});
 	});
@@ -264,7 +265,8 @@ const returnOrderedUserData = (following) => {
 			unorderedList.push({
 				html: ig.html,
 				timestamp: ig.timestamp * 1000,
-				artist: follow.name
+				artist: follow.name,
+				mediaType: "instagram"
 			})
 		});
 
@@ -276,7 +278,8 @@ const returnOrderedUserData = (following) => {
 				city: tm.city,
 				image: tm.image,
 				timestamp: new Date(tm.start_date).getTime(),
-				artist: follow.name
+				artist: follow.name,
+				mediaType: "event_name"
 			})
 		})
 	});
